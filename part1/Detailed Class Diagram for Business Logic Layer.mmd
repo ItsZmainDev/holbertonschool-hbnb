@@ -1,45 +1,63 @@
 classDiagram
+    class BaseModel {
+        +UUID id
+        +DateTime created_at
+        +DateTime updated_at
+    }
 
-class BaseModel {
-	+UUID id
-	+DateTime created_at
-	+DateTime updated_at
-}
+    class User {
+        +String first_name
+        +String last_name
+        +String phone_number
+        +String address
+        +String email
+        +String password
+        +Boolean is_admin
+        +List<Place> places
+        +List<Review> reviews
+        +create_place(place: Place): Place
+        +write_review(review: Review): Review
+    }
 
-class User {
-	+String first_name
-	+String last_name
-	+String phone_number
-	+String email
-	+String password
-	+Boolean is_admin
-	+create_place(): Place
-}
+    class Place {
+        +String type
+        +String description
+        +Float longitude
+        +Float latitude
+        +Float price_per_night
+        +Integer max_guests
+        +Boolean is_available
+        +User owner
+        +List<Amenity> amenities
+        +add_amenity(amenity: Amenity): void
+        +remove_amenity(amenity: Amenity): void
+        +get_reviews(): List<Review>
+    }
 
-class Place {
-	+String name
-	+String description
-	+String location
-	+Float longitude
-	+Float latitude
-	+Float price_per_night
-	+Integer number_of_rooms
-	+Integer number_of_bathrooms
-	+Integer max_guests
-	+User owner
-}
+    class Amenity {
+        +String name
+        +String description
+    }
 
-class Amenity {
-	+String name
-	+String description
-	+Place place
-}
+    class Review {
+        +String text
+        +Interger rating
+        +User owner
+        +Place place
+        +edit_text(new_text: String, new_rating: Integer): void
+        +delete(): void
+    }
 
-%% Inheritance
-BaseModel <|-- User
-BaseModel <|-- Place
-BaseModel <|-- Amenity
+    %% Inheritance
+    BaseModel <|-- User : inherits
+    BaseModel <|-- Place : inherits
+    BaseModel <|-- Amenity : inherits
+    BaseModel <|-- Review : inherits
 
-%% Relationships
-User "1" --> "0..*" Place : owns 
-Place "0..*" o-- "0..*" Amenity : has
+    %% Relationships
+    User "1" --> "0..*" Place : owns
+    Place "0..*" o-- "0..*" Amenity : has
+    Place "1" --> "0..*" Review : receives
+    User "1" --> "0..*" Review : writes
+    Review --> User: written by
+    Review --> Place: reviews
