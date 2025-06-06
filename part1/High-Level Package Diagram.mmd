@@ -1,0 +1,31 @@
+classDiagram
+    class PresentationLayer {
+        <<interface>>
+        +UserAPI
+        +PlaceAPI
+        +ReviewAPI
+        +AmenityAPI
+    }
+
+
+    class BusinessLogicLayer {
+        +UserService
+        +PlaceService
+        +ReviewService
+        +AmenityService
+        +User
+        +Place
+        +Review
+        +Amenity
+    }
+
+    class PersistenceLayer {
+        +UserRepository
+        +PlaceRepository
+        +ReviewRepository
+        +AmenityRepository
+        +DatabaseConnector
+    }
+
+    PresentationLayer --> BusinessLogicLayer : uses (via facade)
+    BusinessLogicLayer --> PersistenceLayer : accesses (repositories)
