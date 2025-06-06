@@ -1,0 +1,85 @@
+sequenceDiagram
+    participant User
+    participant API
+    participant BusinessLogic
+    participant Database
+
+    User->>API: Send request (POST /register)
+    API->>BusinessLogic: Validate request
+    BusinessLogic->>Database: Check if user exists
+    alt User not found
+        Database-->>BusinessLogic: User not found
+        BusinessLogic->>Database: Create new user
+        Database-->>BusinessLogic: User created
+        BusinessLogic-->>API: User created successfully
+        API-->>User: Respond with success message
+    else User already exists
+        Database-->>BusinessLogic: User already exists
+        BusinessLogic-->>API: Registration failed
+        API-->>User: Respond with error message (user already exists)
+    end
+
+    User->>API: Send request (POST /login)
+    API->>BusinessLogic: Validate login credentials
+    BusinessLogic->>Database: Check user credentials
+    alt Valid credentials
+        Database-->>BusinessLogic: Valid credentials
+        BusinessLogic-->>API: Login successful
+        API-->>User: Respond with success message and jwt token
+    else Invalid credentials
+        Database-->>BusinessLogic: Invalid credentials
+        BusinessLogic-->>API: Login failed
+        API-->>User: Respond with error message (invalid credentials)
+    end
+
+	User->>API: Send request (POST /create_place)
+	API->>BusinessLogic: Check user is authenticated (jwt token) and validate request data
+	BusinessLogic->>Database: Create new place
+	alt Place created successfully
+		Database-->>BusinessLogic: Place created
+		BusinessLogic-->>API: Place created successfully
+		API-->>User: Respond with success message
+	else Place creation failed
+		Database-->>BusinessLogic: Place creation failed
+		BusinessLogic-->>API: Place creation failed
+		API-->>User: Respond with error message (creation failed)
+	end
+
+    User->>API: Send request (POST /create_review)
+    API->>BusinessLogic: Verify authentication (jwt) and validate request data
+    alt Valid data and authenticated user
+        BusinessLogic->>Database: Check if place exists
+        alt Place exists
+            Database-->>BusinessLogic: Place found
+            BusinessLogic->>Database: Create a new review for the place
+            alt Creation successful
+                Database-->>BusinessLogic: Review created
+                BusinessLogic-->>API: Review creation successful
+                API-->>User: Respond with success message
+            else Creation failed
+                Database-->>BusinessLogic: Review creation failed
+                BusinessLogic-->>API: Review creation failed
+                API-->>User: Respond with error message (creation failed)
+            end
+        else Place does not exist
+            Database-->>BusinessLogic: Place not found
+            BusinessLogic-->>API: Review creation failed (place not found)
+            API-->>User: Respond with error message (place not found)
+        end
+    else Invalid data or unauthenticated user
+        BusinessLogic-->>API: Review creation failed (invalid data or unauthenticated)
+        API-->>User: Respond with error message (invalid data or unauthenticated)
+    end
+
+	User->>API: Send request (GET /places?criteria)
+    API->>BusinessLogic: Validate criteria and user authentication (if required)
+    BusinessLogic->>Database: Query places with criteria
+    alt Places found
+        Database-->>BusinessLogic: List of places
+        BusinessLogic-->>API: Places fetched successfully
+        API-->>User: Respond with list of places
+    else No places found
+        Database-->>BusinessLogic: No places found
+        BusinessLogic-->>API: No places found
+        API-->>User: Respond with empty list or not found message
+    end
