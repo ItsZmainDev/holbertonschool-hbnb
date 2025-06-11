@@ -45,7 +45,7 @@ sequenceDiagram
 		API-->>User: Respond with error message (creation failed)
 	end
 
-    User->>API: Send request (POST /create_review)
+    User->>API: Send request (POST /create_review/:place_id)
     API->>BusinessLogic: Verify authentication (jwt) and validate request data
     alt Valid data and authenticated user
         BusinessLogic->>Database: Check if place exists
