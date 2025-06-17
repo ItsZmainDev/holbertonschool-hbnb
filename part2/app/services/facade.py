@@ -10,6 +10,5 @@ class HBnBFacade:
     def create_user(self, user_data):
         pass
 
-    # Placeholder method for fetching a place by ID
     def get_place(self, place_id):
         pass
