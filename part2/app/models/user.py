@@ -4,7 +4,7 @@ from base_model import BaseModel
 class User(BaseModel):
     def __init__(
         self, first_name, last_name, phone_number, profile_picture,
-        address, email, password, isAdmin=False
+        address, email, password, isAdmin=False, isOwner=False
     ):
         super().__init__()
         self.first_name = first_name
@@ -15,5 +15,6 @@ class User(BaseModel):
         self.email = email
         self.password = password
         self.isAdmin = isAdmin
+        self.isOwner = isOwner
         self.places = []
         self.reviews = []
