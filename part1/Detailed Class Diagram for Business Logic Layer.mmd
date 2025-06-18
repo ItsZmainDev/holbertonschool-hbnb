@@ -3,6 +3,8 @@ classDiagram
         +UUID id
         +DateTime created_at
         +DateTime updated_at
+        +save()
+        +to_dict()
     }
 
     class User {
@@ -12,7 +14,7 @@ classDiagram
         +String profile_picture
         +String address
         +String email
-        +String password
+        -String password
         +Boolean is_admin
         +List<Place> places
         +List<Review> reviews
@@ -61,5 +63,4 @@ classDiagram
     Place "0..*" o-- "0..*" Amenity : has
     Place "1" --> "0..*" Review : receives
     User "1" --> "0..*" Review : writes
-    Review --> User: written by
     Review --> Place: reviews
