@@ -10,10 +10,10 @@ class BaseModel:
         self.updated_at = time
 
     def save(self):
-        return self
+        self.updated_at = datetime.now()
 
-    def to_dict(self):
-        result = self.__dict__.copy()
-        result["created_at"] = self.created_at.isoformat()
-        result["updated_at"] = self.updated_at.isoformat()
-        return result
+    def update(self, data):
+        for key, value in data.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+        self.save()
