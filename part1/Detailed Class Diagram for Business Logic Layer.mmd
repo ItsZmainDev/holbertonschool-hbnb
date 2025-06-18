@@ -31,6 +31,7 @@ classDiagram
         +Float price_per_night
         +Integer max_guests
         +Boolean is_available
+        +User owner
         +List<Amenity> amenities
         +add_amenity(amenity: Amenity): void
         +remove_amenity(amenity: Amenity): void
@@ -46,6 +47,7 @@ classDiagram
     class Review {
         +String text
         +Interger rating
+        +User user
         +User owner
         +Place place
         +edit_text(new_text: String, new_rating: Integer): void
