@@ -15,8 +15,8 @@ classDiagram
         +String address
         +String email
         +String password
-        +Boolean is_admin
-        +Boolean is_owner
+        +Boolean is_admin 'False'
+        +Boolean is_owner 'False'
         +List<Place> places
         +List<Review> reviews
         +create_place(place: Place): Place
@@ -31,7 +31,6 @@ classDiagram
         +Float price_per_night
         +Integer max_guests
         +Boolean is_available
-        %% +User owner
         +List<Amenity> amenities
         +add_amenity(amenity: Amenity): void
         +remove_amenity(amenity: Amenity): void
