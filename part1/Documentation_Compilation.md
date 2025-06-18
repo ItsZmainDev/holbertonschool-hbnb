@@ -61,6 +61,8 @@ classDiagram
         +UUID id
         +DateTime created_at
         +DateTime updated_at
+        +save()
+        +to_dict()
     }
 
     class User {
@@ -71,7 +73,8 @@ classDiagram
         +String address
         +String email
         +String password
-        +Boolean is_admin
+        +Boolean is_admin 'False'
+        +Boolean is_owner 'False'
         +List<Place> places
         +List<Review> reviews
         +create_place(place: Place): Place
@@ -88,6 +91,7 @@ classDiagram
         +Boolean is_available
         +User owner
         +List<Amenity> amenities
+        +List<Review> reviews
         +add_amenity(amenity: Amenity): void
         +remove_amenity(amenity: Amenity): void
         +get_reviews(): List<Review>
@@ -96,12 +100,13 @@ classDiagram
     class Amenity {
         +String name
         +String description
+        +Place place
     }
 
     class Review {
         +String text
         +Interger rating
-        +User owner
+        +User user
         +Place place
         +edit_text(new_text: String, new_rating: Integer): void
         +delete(): void
@@ -118,7 +123,6 @@ classDiagram
     Place "0..*" o-- "0..*" Amenity : has
     Place "1" --> "0..*" Review : receives
     User "1" --> "0..*" Review : writes
-    Review --> User: written by
     Review --> Place: reviews
 ```
 
