@@ -9,7 +9,6 @@ class Review(BaseModel):
         self.text = text
         self.rating = rating
         self.user: User = user
-        self.owner: User = owner
         self.place: Place = place
 
     def to_dict():
@@ -19,6 +18,6 @@ class Review(BaseModel):
             'updated_at': self.updated_at,
             'text': self.text,
             'rating': self.rating,
-            'owner': self.owner
+            'user': self.user,
             'place': self.place
         }
