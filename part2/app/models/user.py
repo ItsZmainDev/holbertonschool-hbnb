@@ -5,24 +5,14 @@ from review import Review
 
 
 class User(BaseModel):
-    first_name: str = CharField(max_length=50)
-    last_name: str = CharField(max_length=50)
-    phone_number: str = CharField(max_length=15, null=True)
-    profile_picture: str = CharField(max_length=255, null=True)
-    address: str = CharField(max_length=255, null=True)
-    email: str = CharField(max_length=100, unique=True)
-    password: str = CharField(max_length=128)
-    is_admin: bool = BooleanField(default=False)
-    is_owner: bool = BooleanField(default=False)
-    places: List[Place] = ForeignKeyField(Place, backref='users', null=True)
-    reviews: List[Review] = ForeignKeyField(Review, backref='users', null=True)
+    emails = set()
 
     def __init__(
         self, first_name, last_name, phone_number, profile_picture,
         address, email, password, is_admin=False, is_owner=False
     ):
         super().__init__()
-        
+
         self.first_name = first_name
         self.last_name = last_name
         self.phone_number = phone_number
@@ -34,6 +24,55 @@ class User(BaseModel):
         self.is_owner = is_owner
         self.places: List[Place] = []
         self.reviews: List[Review] = []
+
+    @property
+    def first_name(self):
+        return self.__first_name
+
+    @first_name.setter
+    def first_name(self, value):
+        if not isinstance(value, str):
+            raise TypeError("First name must be a string")
+        super().is_max_length('First name', value, 50)
+        self.__first_name = value
+
+    @property
+    def last_name(self):
+        return self.__last_name
+
+    @last_name.setter
+    def last_name(self, value):
+        if not isinstance(value, str):
+            raise TypeError("Last name must be a string")
+        super().is_max_length('Last name', value, 50)
+        self.__last_name = value
+
+        @property
+    def email(self):
+        return self.__email
+
+    @email.setter
+    def email(self, value):
+        if not isinstance(value, str):
+            raise TypeError("Email must be a string")
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", value):
+            raise ValueError("Invalid email format")
+        if value in User.emails:
+            raise ValueError("Email already exists")
+        if hasattr(self, "_User__email"):
+            User.emails.discard(self.__email)
+        self.__email = value
+        User.emails.add(value)
+
+    @property
+    def is_admin(self):
+        return self.__is_admin
+
+    @is_admin.setter
+    def is_admin(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("Is Admin must be a boolean")
+        self.__is_admin = value
 
     def to_dict(self):
         return {
