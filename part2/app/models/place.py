@@ -4,11 +4,13 @@ from user import User
 
 class Place(BaseModel):
     def __init__(
-        self, type, description, longitude, latitude,
+        self, type, title, description, longitude, latitude,
         price_per_night, max_guests, is_available, owner
     ):
         super().__init__()
+
         self.type = type
+        self.title = title
         self.description = description
         self.longitude = longitude
         self.latitude = latitude
@@ -24,6 +26,7 @@ class Place(BaseModel):
             'created_at': self.created_at,
             'updated_at': self.updated_at,
             'type': self.type,
+            'title': self.title,
             'description': self.description,
             'longitude': self.longitude,
             'latitude': self.latitude,
