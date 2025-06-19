@@ -4,14 +4,19 @@ from place import Place
 
 
 class Review(BaseModel):
-    def __init__(self, text, rating, user, owner, place):
+    text: str = CharField()
+    rating: int = CharField(max_length=5, default=1)
+    user: User = ForeignKeyField(User, backref='reviews')
+    place: Place = ForeignKeyField(Place, backref='reviews')
+
+    def __init__(self, text, rating=1, user, owner, place):
         super().__init__()
         self.text = text
         self.rating = rating
         self.user: User = user
         self.place: Place = place
 
-    def to_dict():
+    def to_dict(self):
         return {
             'id': self.id,
             'created_at': self.created_at,
