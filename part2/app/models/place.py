@@ -9,6 +9,23 @@ class Place(BaseModel):
     ):
         super().__init__()
 
+        if not title:
+            return ValueError("title is not defined")
+
+        if price_per_night < 0:
+            return ValueError("price_per_night can't be under 0")
+
+        if latitude < -90.0 or latitude > 90.0:
+            ValueError("latitude must be between -90.0 and 90.0")
+
+        if longitude < -180.0 or longitude > 180.0:
+            ValueError("longitude must be between -180.0 and 180.0")
+
+        if not owner or not isinstance(owner, User):
+            return ValueError(
+                "owner must be defined and must be an instance of User"
+            )
+
         self.type = type
         self.title = title
         self.description = description
