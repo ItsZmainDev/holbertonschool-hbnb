@@ -47,7 +47,7 @@ class User(BaseModel):
         super().is_max_length('Last name', value, 50)
         self.__last_name = value
 
-        @property
+    @property
     def email(self):
         return self.__email
 
@@ -89,5 +89,5 @@ class User(BaseModel):
             'is_admin': self.is_admin,
             'is_owner': self.is_owner,
             'places': [place.id for place in self.places],
-            'reviews': [review.id for review in self.reviews]
+            'reviews': [review.id for review in self.reviews],
         }
