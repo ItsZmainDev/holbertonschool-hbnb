@@ -23,6 +23,15 @@ class HBnBFacade:
         """Retrieve all users from the database"""
         return self.user_repo.get_all()
 
+    def update_user(self, user_id, user_data):
+        user = self.user_repo.get(user_id)
+        if not user:
+            return None
+        for key, value in user_data.items():
+            setattr(user, key, value)
+        self.user_repo.update(user_id, user)
+        return user
+
     def create_amenity(self, amenity_data):
         new_amenity = Amenity(
             id=str(uuid.uuid4()),
