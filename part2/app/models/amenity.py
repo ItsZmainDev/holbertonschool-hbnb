@@ -6,8 +6,9 @@ if TYPE_CHECKING:
 
 
 class Amenity(BaseModel):
-    def __init__(self, name, description, place):
+    def __init__(self, id, name, description, place):
         super().__init__()
+        self.id = id
         self.name = name
         self.description = description
         self.place: Place = place
