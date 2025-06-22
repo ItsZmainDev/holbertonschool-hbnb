@@ -1,4 +1,4 @@
-from base_model import BaseModel
+from .base_model import BaseModel
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
