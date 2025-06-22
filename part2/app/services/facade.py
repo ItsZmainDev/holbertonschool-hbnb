@@ -33,12 +33,7 @@ class HBnBFacade:
         return user
 
     def create_amenity(self, amenity_data):
-        new_amenity = Amenity(
-            id=str(uuid.uuid4()),
-            name=amenity_data['name'],
-            description=amenity_data.get('description', ''),
-            place=None
-        )
+        new_amenity = Amenity(**amenity_data)
         self.amenity_repo.add(new_amenity.id, new_amenity)
         return new_amenity.to_dict()
 
@@ -55,7 +50,7 @@ class HBnBFacade:
         amenity = self.amenity_repo.get(amenity_id)
         if not amenity:
             return False
-        amenity.name = amenity_data.get('name', amenity.name)
-        amenity.description = amenity_data.get('description', amenity.description)
+        for key, value in amenity_data.items():
+            setattr(amenity, key, value)
         self.amenity_repo.update(amenity_id, amenity)
         return True
