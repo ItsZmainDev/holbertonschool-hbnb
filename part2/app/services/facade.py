@@ -54,3 +54,26 @@ class HBnBFacade:
             setattr(amenity, key, value)
         self.amenity_repo.update(amenity_id, amenity)
         return True
+
+    def create_place(self, place_data):
+        place = Place(**place_data)
+        self.place_repo.add(place.id, place)
+        return place.to_dict()
+
+    def get_place(self, place_id):
+        place = self.place_repo.get(place_id)
+        if place:
+            return place.to_dict()
+        return None
+
+    def get_all_places(self):
+        return [place.to_dict() for place in self.place_repo.get_all()]
+
+    def update_place(self, place_id, place_data):
+        place = self.place_repo.get(place_id)
+        if not place:
+            return None
+        for key, value in place_data.items():
+            setattr(place, key, value)
+        self.place_repo.update(place_id, place)
+        return place.to_dict()
