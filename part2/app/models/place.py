@@ -1,9 +1,9 @@
-from base_model import BaseModel
+from app.models import BaseModel
 from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from user import User
-    from amenity import Amenity
+    from app.models import User
+    from app.models import Amenity
 
 
 class Place(BaseModel):

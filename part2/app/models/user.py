@@ -1,15 +1,17 @@
 import re
-from base_model import BaseModel
-from place import Place
-from review import Review
+from app.models import BaseModel
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.models.place import Place
+    from app.models.review import Review
 
 
 class User(BaseModel):
     emails = set()
 
     def __init__(
-        self, first_name, last_name, phone_number, profile_picture,
-        address, email, password, is_admin=False, is_owner=False
+        self, first_name, last_name, phone_number, email, password, address=None, profile_picture=None, is_admin=False, is_owner=False
     ):
         super().__init__()
 
