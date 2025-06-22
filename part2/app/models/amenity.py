@@ -4,43 +4,31 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app.models import Place
 
-
 class Amenity(BaseModel):
-    def __init__(self, id, name, description, place):
+    def __init__(self, name, description=None, place=None, id=None):
         super().__init__()
-        self.id = id
+        if id is not None:
+            self.id = id
         self.name = name
         self.description = description
-        self.place: Place = place
+        self.place = place
 
     @property
     def name(self):
-        self.__name = self.name
+        return self.__name
 
     @name.setter
     def name(self, value):
         if not isinstance(value, str):
             raise TypeError("Name must be a string")
         super().is_max_length("Name", value, 50)
-        self.__name = self.name
-
-    @property
-    def place(self):
-        self.__place = self.place
-
-    @place.setter
-    def place(self, value):
-        if not isinstance(value, Place):
-            raise TypeError("Place must be an instance of Place")
-        if not hasattr(value, 'id') or value.id is None:
-            raise ValueError("Place must have a valid id")
-        self.__place = value
-
+        self.__name = value
+    
     def to_dict(self):
         return {
             'id': self.id,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'name': self.name,
             'description': self.description,
             'place': self.place

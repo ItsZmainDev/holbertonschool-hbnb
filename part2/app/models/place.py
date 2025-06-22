@@ -25,18 +25,19 @@ class Place(BaseModel):
 
     @property
     def title(self):
-        self.__title = self.title
+        return self.__title
 
     @title.setter
     def title(self, value):
         if not isinstance(value, str):
             raise TypeError("Title must be a string")
-        super().is_max_length('First name', value, 50)
-        self.__first_name = value
+        super().is_max_length('Title', value, 50)
+        self.__title = value
 
     @property
     def price_per_night(self):
-        self.__price_per_night = self.price_per_night
+        return self.__price_per_night
+
 
     @price_per_night.setter
     def price_per_night(self, value):
@@ -48,7 +49,7 @@ class Place(BaseModel):
 
     @property
     def longitude(self):
-        self.__longitude = self.longitude
+        return self.__longitude
 
     @longitude.setter
     def longitude(self, value):
@@ -60,7 +61,7 @@ class Place(BaseModel):
 
     @property
     def latitude(self):
-        self.__latitude = self.latitude
+        return self.__latitude
 
     @latitude.setter
     def latitude(self, value):
@@ -72,12 +73,13 @@ class Place(BaseModel):
 
     @property
     def owner(self):
-        self.__owner = self.owner
+        return self.__owner
 
     @owner.setter
     def owner(self, value):
+        from app.models.user import User
         if not isinstance(value, User):
-            raise TypeError("Onwer must be an instance of User")
+            raise TypeError("Owner must be an instance of User")
         if not hasattr(value, 'id') or value.id is None:
             raise ValueError("Owner must have a valid id")
         self.__owner = value
@@ -85,8 +87,8 @@ class Place(BaseModel):
     def to_dict(self):
         return {
             'id': self.id,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'type': self.type,
             'title': self.title,
             'description': self.description,
@@ -95,6 +97,6 @@ class Place(BaseModel):
             'price_per_night': self.price_per_night,
             'max_guests': self.max_guests,
             'is_available': self.is_available,
-            'owner': self.owner,
+            'owner_id': self.owner.id if self.owner else None,
             'amenities': [amenity.id for amenity in self.amenities],
         }
