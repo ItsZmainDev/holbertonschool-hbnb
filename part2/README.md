@@ -4,7 +4,7 @@ This repository contains the second part of the **HBnB Project**, focusing on bu
 
 ---
 
-## 🚀 Objectives
+## Objectives
 
 By the end of this part, the application includes:
 
@@ -17,7 +17,7 @@ By the end of this part, the application includes:
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 part2/
@@ -34,7 +34,7 @@ part2/
 
 ---
 
-## 📦 Key Technologies
+## Key Technologies
 
 - **Python 3**
 - **Flask** – micro web framework
@@ -44,15 +44,15 @@ part2/
 
 ---
 
-## 🛠️ Implemented Features
+## Implemented Features
 
-### ✅ Business Logic
+### Business Logic
 - `User` – basic user model with validation and ID generation
 - `Place` – includes geolocation, price, availability, owner, and amenities
 - `Amenity` – supports dynamic amenity creation and update
 - `Review` – includes validation for rating (1-5), text, and associations
 
-### ✅ API Endpoints
+### API Endpoints
 | Entity   | Methods Implemented     |
 |----------|--------------------------|
 | User     | POST, GET, PUT           |
@@ -63,7 +63,7 @@ part2/
 > JWT authentication will be introduced in **Part 3**
 
 
-## 🧪 Testing
+##  Testing
 
 - **Manual Testing**: via `cURL` and Swagger UI (`http://127.0.0.1:5000/api/v1/`)
 - **Validation Checks**: each entity validates its data fields (e.g. email, rating)
@@ -72,7 +72,7 @@ part2/
 Manual test results are documented in [TESTING.md](./TESTING.md)
 
 
-## 📘 Learning Outcomes
+## Learning Outcomes
 
 - Design and implement clean modular Python projects
 - Build and document RESTful APIs with Flask-RESTx
@@ -81,19 +81,10 @@ Manual test results are documented in [TESTING.md](./TESTING.md)
 - Test and debug APIs with professional tools and strategies
 
 
-## 📚 References
+## References
 
 - [Flask Documentation](https://flask.palletsprojects.com/)
 - [Flask-RESTx Docs](https://flask-restx.readthedocs.io/)
 - [RESTful API Design Guide](https://restfulapi.net/)
 - [Python Project Structure Best Practices](https://docs.python-guide.org/writing/structure/)
 - [Facade Design Pattern](https://refactoring.guru/design-patterns/facade/python/example)
-
-
-## 👨‍💻 Author
-
-Part of the **Holberton School** Higher-Level Programming Curriculum  
-Project evaluated via checkpoints, testing, and review.
-
-- **Martin Clement** - [Github Profile](https://github.com/ItsZmainDev)
-- **Florian Chereau** - [Github Profile](https://github.com/C-Florian)
