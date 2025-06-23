@@ -5,68 +5,63 @@ if TYPE_CHECKING:
     from app.models import User
     from app.models import Place
 
-
 class Review(BaseModel):
-    def __init__(self, text, rating, user, owner, place):
+    def __init__(self, text, rating, user, place):
         super().__init__()
+        self._text = None
+        self._rating = None
+        self._user = None
+        self._place = None
+
         self.text = text
         self.rating = rating
-        self.user: User = user
-        self.place: Place = place
+        self.user = user
+        self.place = place
+        self.user_id = user.id if user else None
+        self.place_id = place.id if place else None
 
     @property
     def text(self):
-        self.__text = self.text
+        return self._text
 
     @text.setter
     def text(self, value):
-        if not isinstance(value, str):
-            raise TypeError("Text must be a string")
-        self.__text = value
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("Text must be a non-empty string")
+        self._text = value.strip()
 
     @property
     def rating(self):
-        self.__rating = self.rating
+        return self._rating
 
     @rating.setter
     def rating(self, value):
         if not isinstance(value, int):
-            raise TypeError("Rating must be a integer")
+            raise TypeError("Rating must be an integer")
         if value < 1 or value > 5:
             raise ValueError("Rating must be between 1 and 5")
-        self.__rating = value
+        self._rating = value
 
     @property
     def user(self):
-        self.__user = self.user
+        return self._user
 
     @user.setter
     def user(self, value):
+        from app.models.user import User
         if not isinstance(value, User):
             raise TypeError("User must be an instance of User")
-        if not hasattr(value, 'id') or value.id is None:
+        if not hasattr(value, 'id') or not value.id:
             raise ValueError("User must have a valid id")
-        self.__user = value
-
-    @property
-    def place(self):
-        self.__place = self.place
-
-    @place.setter
-    def place(self, value):
-        if not isinstance(value, Place):
-            raise TypeError("Place must be an instance of Place")
-        if not hasattr(value, 'id') or value.id is None:
-            raise ValueError("Place must have a valid id")
-        self.__place = value
+        self._user = value
 
     def to_dict(self):
         return {
             'id': self.id,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'text': self.text,
             'rating': self.rating,
-            'user': self.user,
-            'place': self.place
+            'user_id': self.user_id,
+            'place_id': self.place_id
         }
