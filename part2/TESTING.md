@@ -13,7 +13,7 @@ This report outlines the tests performed to validate the API endpoints implement
 
 ---
 
-## ✅ USER ENDPOINTS
+## USER ENDPOINTS
 
 ### Test: Create a valid user
 
@@ -24,7 +24,7 @@ curl -X POST http://127.0.0.1:5000/api/v1/users/ \
 ```
 
 **Expected:** 201 Created  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
@@ -37,11 +37,11 @@ curl -X POST http://127.0.0.1:5000/api/v1/users/ \
 ```
 
 **Expected:** 400 Bad Request  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
-## 🏠 PLACE ENDPOINTS
+## PLACE ENDPOINTS
 
 ### Test: Create a valid place
 
@@ -52,7 +52,7 @@ curl -X POST http://127.0.0.1:5000/api/v1/places/ \
 ```
 
 **Expected:** 201 Created  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
@@ -65,7 +65,7 @@ curl -X POST http://127.0.0.1:5000/api/v1/places/ \
 ```
 
 **Expected:** 400 Bad Request  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
@@ -78,11 +78,11 @@ curl -X POST http://127.0.0.1:5000/api/v1/places/ \
 ```
 
 **Expected:** 400 Bad Request  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
-## 💡 AMENITY ENDPOINTS
+## AMENITY ENDPOINTS
 
 ### Test: Create a valid amenity
 
@@ -93,7 +93,7 @@ curl -X POST http://127.0.0.1:5000/api/v1/amenities/ \
 ```
 
 **Expected:** 201 Created  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
@@ -106,11 +106,11 @@ curl -X POST http://127.0.0.1:5000/api/v1/amenities/ \
 ```
 
 **Expected:** 400 Bad Request  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
-## ✍️ REVIEW ENDPOINTS
+## REVIEW ENDPOINTS
 
 ### Test: Create a valid review
 
@@ -121,7 +121,7 @@ curl -X POST http://127.0.0.1:5000/api/v1/reviews/ \
 ```
 
 **Expected:** 201 Created  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
@@ -134,7 +134,7 @@ curl -X POST http://127.0.0.1:5000/api/v1/reviews/ \
 ```
 
 **Expected:** 400 Bad Request  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
@@ -147,7 +147,7 @@ curl -X POST http://127.0.0.1:5000/api/v1/reviews/ \
 ```
 
 **Expected:** 400 Bad Request  
-**Result:** ✅ Passed  
+**Result:** Passed   
 
 ---
 
@@ -158,7 +158,7 @@ curl -X DELETE http://127.0.0.1:5000/api/v1/reviews/<review_id>
 ```
 
 **Expected:** 200 OK  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
@@ -169,11 +169,11 @@ curl http://127.0.0.1:5000/api/v1/places/<place_id>/reviews
 ```
 
 **Expected:** 200 OK, returns list of reviews  
-**Result:** ✅ Passed  
+**Result:** Passed  
 
 ---
 
-## 🧾 Conclusion
+## Conclusion
 
 All endpoints were tested with both valid and invalid inputs using `cURL`. Each endpoint returned the expected status code and output format. Manual tests using Swagger UI confirmed that the documentation is up-to-date and accurate.
 
