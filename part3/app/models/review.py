@@ -11,9 +11,6 @@ if TYPE_CHECKING:
 class Review(BaseModel, db.Model):
     __tablename__ = 'reviews'
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     text = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
