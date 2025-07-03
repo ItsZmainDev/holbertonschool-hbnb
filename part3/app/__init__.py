@@ -1,14 +1,11 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager
+from app.extensions import db
+from app.extensions import jwt
 from flask_restx import Api
 from app.api.v1.users import api as users_ns
 from app.api.v1.amenities import api as amenities_ns
 from app.api.v1.places import api as places_ns
 from app.api.v1.reviews import api as reviews_ns
-
-db = SQLAlchemy()
-jwt = JWTManager()
 
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
@@ -28,5 +25,11 @@ def create_app(config_class="config.DevelopmentConfig"):
 
     db.init_app(app)
     jwt.init_app(app)
+
+    with app.app_context():
+        db.drop_all()
+
+        db.create_all()
+        print("Tables recreated successfully!")
 
     return app

@@ -1,11 +1,24 @@
 from app.models import BaseModel
 from typing import TYPE_CHECKING
+import uuid
+from datetime import datetime
+from app.extensions import db
 
 if TYPE_CHECKING:
     from app.models import User
     from app.models import Place
 
-class Review(BaseModel):
+class Review(BaseModel, db.Model):
+    __tablename__ = 'reviews'
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    text = db.Column(db.Text, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    place_id = db.Column(db.String(36), db.ForeignKey('places.id'), nullable=False)
+
     def __init__(self, text, rating, user, place):
         super().__init__()
         self._text = None
@@ -20,40 +33,40 @@ class Review(BaseModel):
         self.user_id = user.id if user else None
         self.place_id = place.id if place else None
 
-    @property
-    def text(self):
-        return self._text
+    # @property
+    # def text(self):
+    #     return self._text
 
-    @text.setter
-    def text(self, value):
-        if not isinstance(value, str) or not value.strip():
-            raise ValueError("Text must be a non-empty string")
-        self._text = value.strip()
+    # @text.setter
+    # def text(self, value):
+    #     if not isinstance(value, str) or not value.strip():
+    #         raise ValueError("Text must be a non-empty string")
+    #     self._text = value.strip()
 
-    @property
-    def rating(self):
-        return self._rating
+    # @property
+    # def rating(self):
+    #     return self._rating
 
-    @rating.setter
-    def rating(self, value):
-        if not isinstance(value, int):
-            raise TypeError("Rating must be an integer")
-        if value < 1 or value > 5:
-            raise ValueError("Rating must be between 1 and 5")
-        self._rating = value
+    # @rating.setter
+    # def rating(self, value):
+    #     if not isinstance(value, int):
+    #         raise TypeError("Rating must be an integer")
+    #     if value < 1 or value > 5:
+    #         raise ValueError("Rating must be between 1 and 5")
+    #     self._rating = value
 
-    @property
-    def user(self):
-        return self._user
+    # @property
+    # def user(self):
+    #     return self._user
 
-    @user.setter
-    def user(self, value):
-        from app.models.user import User
-        if not isinstance(value, User):
-            raise TypeError("User must be an instance of User")
-        if not hasattr(value, 'id') or not value.id:
-            raise ValueError("User must have a valid id")
-        self._user = value
+    # @user.setter
+    # def user(self, value):
+    #     from app.models.user import User
+    #     if not isinstance(value, User):
+    #         raise TypeError("User must be an instance of User")
+    #     if not hasattr(value, 'id') or not value.id:
+    #         raise ValueError("User must have a valid id")
+    #     self._user = value
 
     def to_dict(self):
         return {
