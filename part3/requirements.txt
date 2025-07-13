@@ -4,3 +4,4 @@ typing
 abc
 flask_sqlalchemy
 flask_jwt_extended
+flask-bcrypt

@@ -10,8 +10,14 @@ if TYPE_CHECKING:
 class Amenity(BaseModel, db.Model):
     __tablename__ = 'amenities'
 
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(50), nullable=False, unique=True)
     description = db.Column(db.Text, nullable=True)
+
+    __table_args__ = (
+        db.CheckConstraint('length(name) > 0', name='name_not_empty'),
+    )
+
+    places = db.relationship('Place', secondary='place_amenities', back_populates='amenities')
 
     def __init__(self, name, description=None, place=None, id=None):
         super().__init__()

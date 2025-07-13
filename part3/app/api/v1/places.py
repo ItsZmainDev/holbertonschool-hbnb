@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from app.utils.auth_decorators import owner_or_admin_required, login_required 
 
 api = Namespace('places', description='Place operations')
 
@@ -51,29 +52,31 @@ class PlaceResource(Resource):
             api.abort(404, 'Place not found')
         return place, 200
 
-    @api.expect(place_model)
+    @owner_or_admin_required
+    @api.expect(place_model, validate=True)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Access denied')
     def put(self, place_id):
-        """Update a place's information"""
-        data = api.payload
-        if not data or 'title' not in data or 'price_per_night' not in data:
-            api.abort(400, 'Invalid input data')
-        place = facade.update_place(place_id, data)
+        """Update a place's information (Owner or Admin only)"""
+        place_data = api.payload
+        place = facade.get_place(place_id)
         if not place:
-            api.abort(404, 'Place not found')
-        return place, 200
-    
-    @api.route('/<place_id>/reviews')
-    class PlaceReviewList(Resource):
-        @api.response(200, 'List of reviews for the place retrieved successfully')
-        @api.response(404, 'Place not found')
-        def get(self, place_id):
-            """Get all reviews for a specific place"""
-            place = facade.get_place(place_id)
-            if not place:
-                api.abort(404, 'Place not found')
+            return {'error': 'Place not found'}, 404
+        
+        updated_place = facade.update_place(place_id, place_data)
+        return {'message': 'Place updated successfully'}, 200
 
-            reviews = facade.get_reviews_by_place(place_id)
-            return reviews, 200
+    @owner_or_admin_required
+    @api.response(200, 'Place deleted successfully')
+    @api.response(404, 'Place not found')
+    @api.response(403, 'Access denied')
+    def delete(self, place_id):
+        """Delete a place (Owner or Admin only)"""
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+        
+        facade.delete_place(place_id)
+        return {'message': 'Place deleted successfully'}, 200

@@ -21,10 +21,14 @@ class Place(BaseModel, db.Model):
     price_per_night = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
+    type = db.Column(db.String(50), nullable=False)
+    max_guests = db.Column(db.Integer, nullable=False)
+    is_available = db.Column(db.Boolean, default=True, nullable=False)
+
     owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
 
-    reviews = db.relationship('Review', backref='place', lazy='dynamic')
-    amenities = db.relationship('Amenity', secondary=place_amenities, backref='places')
+    reviews = db.relationship('Review', backref='place', lazy='dynamic', cascade='all, delete-orphan')
+    amenities = db.relationship('Amenity', secondary=place_amenities, back_populates='places')
 
     def __init__(
         self, type, title, description, longitude, latitude,

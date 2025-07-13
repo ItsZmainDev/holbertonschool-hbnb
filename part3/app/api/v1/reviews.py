@@ -1,6 +1,7 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from app.utils.auth_decorators import owner_or_admin_required
 
 api = Namespace('reviews', description='Review operations')
 
@@ -39,23 +40,33 @@ class ReviewResource(Resource):
             api.abort(404, 'Review not found')
         return review, 200
 
-    @api.expect(review_model)
+    @owner_or_admin_required
+    @api.expect(review_model, validate=True)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Access denied')
     def put(self, review_id):
-        data = request.json
-        updated = facade.update_review(review_id, data)
-        if not updated:
-            api.abort(404, 'Review not found')
+        """Update a review (Owner or Admin only)"""
+        review_data = api.payload
+        review = facade.get_review(review_id)
+        if not review:
+            return {'error': 'Review not found'}, 404
+        
+        updated_review = facade.update_review(review_id, review_data)
         return {'message': 'Review updated successfully'}, 200
-
+    
+    @owner_or_admin_required
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
+    @api.response(403, 'Access denied')
     def delete(self, review_id):
-        deleted = facade.delete_review(review_id)
-        if not deleted:
-            api.abort(404, 'Review not found')
+        """Delete a review (Owner or Admin only)"""
+        review = facade.get_review(review_id)
+        if not review:
+            return {'error': 'Review not found'}, 404
+        
+        facade.delete_review(review_id)
         return {'message': 'Review deleted successfully'}, 200
 
 @api.route('/places/<string:place_id>/reviews')

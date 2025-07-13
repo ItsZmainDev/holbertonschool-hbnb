@@ -2,6 +2,7 @@ import re
 from app.models import BaseModel
 from typing import List, TYPE_CHECKING
 from app.extensions import db
+from app.extensions import bcrypt
 import uuid
 from datetime import datetime
 
@@ -20,12 +21,12 @@ class User(BaseModel, db.Model):
     password = db.Column(db.String(128), nullable=False)
     address = db.Column(db.String(200), nullable=True)
     profile_picture = db.Column(db.String(200), nullable=True)
-    is_admin = db.Column(db.Boolean, default=False)
-    is_owner = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_owner = db.Column(db.Boolean, default=False, nullable=False)
     
     # Relations
-    places = db.relationship('Place', backref='owner', lazy='dynamic')
-    reviews = db.relationship('Review', backref='user', lazy='dynamic')
+    places = db.relationship('Place', backref='owner', lazy='dynamic', cascade='all, delete-orphan')
+    reviews = db.relationship('Review', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
     emails = set()
 
@@ -45,6 +46,24 @@ class User(BaseModel, db.Model):
         self.is_owner = is_owner
         self.places: List[Place] = []
         self.reviews: List[Review] = []
+
+    def hash_password(self, password):
+        """Hashes the password before storing it."""
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def verify_password(self, password):
+        """Verifies if the provided password matches the hashed password."""
+        return bcrypt.check_password_hash(self.password, password)
+
+    @property
+    def is_admin(self):
+        return self.__is_admin
+
+    @is_admin.setter
+    def is_admin(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("Is Admin must be a boolean")
+        self.__is_admin = value
 
     # @property
     # def first_name(self):

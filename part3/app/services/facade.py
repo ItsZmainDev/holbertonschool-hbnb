@@ -16,6 +16,10 @@ class HBnBFacade:
     def get_user(self, user_id):
         return self.user_repo.get(user_id)
 
+    def is_user_admin(self, user_id):
+        user = self.get_user(user_id)
+        return user and user.is_admin if user else False
+
     def get_user_by_email(self, email):
         return self.user_repo.get_by_attribute('email', email)
 
@@ -33,9 +37,16 @@ class HBnBFacade:
         return user
 
     def create_amenity(self, amenity_data):
-        new_amenity = Amenity(**amenity_data)
-        self.amenity_repo.add(new_amenity)
-        return new_amenity.to_dict()
+        try:
+            existing_amenity = self.amenity_repo.get_by_attribute('name', amenity_data['name'])
+            if existing_amenity:
+                raise ValueError("Amenity with this name already exists")
+            
+            amenity = Amenity(**amenity_data)
+            self.amenity_repo.add(amenity)
+            return amenity
+        except Exception as e:
+            raise ValueError(f"Error creating amenity: {str(e)}")
 
     def get_amenity(self, amenity_id):
         amenity = self.amenity_repo.get(amenity_id)
@@ -49,11 +60,17 @@ class HBnBFacade:
     def update_amenity(self, amenity_id, amenity_data):
         amenity = self.amenity_repo.get(amenity_id)
         if not amenity:
-            return False
+            return None
+        
+        if 'name' in amenity_data and amenity_data['name'] != amenity.name:
+            existing = self.amenity_repo.get_by_attribute('name', amenity_data['name'])
+            if existing and existing.id != amenity_id:
+                raise ValueError("Amenity with this name already exists")
+        
         for key, value in amenity_data.items():
             setattr(amenity, key, value)
         self.amenity_repo.update(amenity_id, amenity)
-        return True
+        return amenity
 
     def create_place(self, place_data):
         owner_id = place_data.pop('owner_id', None)

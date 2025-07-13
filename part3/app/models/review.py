@@ -16,6 +16,11 @@ class Review(BaseModel, db.Model):
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
     place_id = db.Column(db.String(36), db.ForeignKey('places.id'), nullable=False)
 
+    __table_args__ = (
+        db.CheckConstraint('rating >= 1 AND rating <= 5', name='rating_range'),
+        db.CheckConstraint('length(text) > 0', name='text_not_empty'),
+    )
+
     def __init__(self, text, rating, user, place):
         super().__init__()
         self._text = None
