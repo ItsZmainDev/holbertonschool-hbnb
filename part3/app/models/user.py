@@ -4,6 +4,7 @@ from typing import List, TYPE_CHECKING
 from app.extensions import db
 import uuid
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 if TYPE_CHECKING:
     from app.models.place import Place
@@ -97,6 +98,12 @@ class User(BaseModel, db.Model):
     #     if not isinstance(value, bool):
     #         raise TypeError("Is Admin must be a boolean")
     #     self.__is_admin = value
+    
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password, password)
 
     def to_dict(self):
         return {
