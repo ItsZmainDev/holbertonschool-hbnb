@@ -1,0 +1,52 @@
+erDiagram
+    User {
+        uuid id PK
+        varchar first_name
+        varchar last_name
+        varchar email UK
+        varchar password
+        varchar phone_number
+        varchar address
+        varchar profile_picture
+        boolean is_admin
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Place {
+        uuid id PK
+        varchar title
+        text description
+        float price_per_night
+        float latitude
+        float longitude
+        varchar type
+        integer max_guests
+        boolean is_available
+        uuid owner_id FK
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Review {
+        uuid id PK
+        text text
+        integer rating
+        uuid user_id FK
+        uuid place_id FK
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Amenity {
+        uuid id PK
+        varchar name UK
+        text description
+        datetime created_at
+        datetime updated_at
+    }
+    
+    User ||--o{ Place : owns
+    User ||--o{ Review : writes
+    Place ||--o{ Review : receives
+    Place }o--o{ Amenity : "many-to-many via place_amenities"
