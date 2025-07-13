@@ -103,7 +103,7 @@ class HBnBFacade:
             user=user,
             place=place
         )
-        self.review_repo.add(review)  # Correction ici
+        self.review_repo.add(review)
         return review.to_dict() 
 
     def get_review(self, review_id):
@@ -131,6 +131,27 @@ class HBnBFacade:
 
         self.review_repo.update(review_id, review)
         return review.to_dict()
+
+    def delete_user(self, user_id):
+        user = self.user_repo.get(user_id)
+        if not user:
+            return False
+        self.user_repo.delete(user_id)
+        return True
+
+    def delete_amenity(self, amenity_id):
+        amenity = self.amenity_repo.get(amenity_id)
+        if not amenity:
+            return False
+        self.amenity_repo.delete(amenity_id)
+        return True
+
+    def delete_place(self, place_id):
+        place = self.place_repo.get(place_id)
+        if not place:
+            return False
+        self.place_repo.delete(place_id)
+        return True
 
     def delete_review(self, review_id):
         review = self.review_repo.get(review_id)
