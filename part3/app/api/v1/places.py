@@ -6,11 +6,9 @@ from app.utils.auth_decorators import owner_or_admin_required, login_required
 
 api = Namespace('places', description='Place operations')
 
-review_model = api.model('PlaceReview', {
-    'id': fields.String(description='Review ID'),
-    'text': fields.String(description='Text of the review'),
-    'rating': fields.Integer(description='Rating'),
-    'user_id': fields.String(description='ID of the user')
+amenity_model = api.model('Amenity', {
+    'name': fields.String(description='Name of the amenity'),
+    'description': fields.String(description='Description of the amenity'),
 })
 
 place_model = api.model('Place', {
@@ -20,8 +18,7 @@ place_model = api.model('Place', {
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
     'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's"),
-    'reviews': fields.List(fields.Nested(review_model), description='List of reviews'),
+    'amenities': fields.List(fields.Nested(amenity_model), description='List of amenities'),
 })
 
 @api.route('/')

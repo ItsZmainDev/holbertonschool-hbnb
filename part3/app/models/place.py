@@ -43,7 +43,7 @@ class Place(BaseModel, db.Model):
         self.price_per_night = price_per_night
         self.max_guests = max_guests
         self.is_available = is_available
-        self.owner: User = owner
+        self.owner = owner
         self.amenities: List[Amenity] = []
 
     # @property
