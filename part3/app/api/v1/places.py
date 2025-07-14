@@ -1,4 +1,6 @@
 from flask_restx import Namespace, Resource, fields
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import request
 from app.services import facade
 
 api = Namespace('places', description='Place operations')
@@ -26,17 +28,22 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
-        """Register a new place"""
-        data = api.payload
+        """Register a new place (authenticated only)"""
+        data = request.get_json()
         if not data or 'title' not in data or 'price_per_night' not in data:
             api.abort(400, 'Invalid input data')
+
+        current_user = get_jwt_identity()
+        data['user_id'] = current_user['id']  # Associe le lieu à l'utilisateur connecté
+
         place = facade.create_place(data)
         return place, 201
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
-        """Retrieve a list of all places"""
+        """Retrieve a list of all places (public)"""
         places = facade.get_all_places()
         return places, 200
 
@@ -53,8 +60,10 @@ class PlaceResource(Resource):
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
+    @api.response(403, 'Unauthorized action')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, place_id):
         """Update a place's information"""
         data = api.payload
