@@ -5,7 +5,6 @@ from app.services import facade
 
 api = Namespace('auth', description='Authentication operations')
 
-# Expected input schema
 login_model = api.model('Login', {
     'email': fields.String(required=True, description='User email'),
     'password': fields.String(required=True, description='User password')
@@ -23,7 +22,6 @@ class LoginResource(Resource):
         if not user or not user.verify_password(data['password']):
             return {'error': 'Invalid credentials'}, 401
 
-        # Identité = chaîne, claims supplémentaires = dictionnaire
         token = create_access_token(
             identity=str(user.id),
             additional_claims={'is_admin': user.is_admin}
