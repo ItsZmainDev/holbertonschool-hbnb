@@ -11,7 +11,6 @@ class HBnBFacade:
         self.review_repo = SQLAlchemyRepository(Review)
         self.amenity_repo = SQLAlchemyRepository(Amenity)
 
-    # ===== USER METHODS =====
     def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
@@ -29,7 +28,6 @@ class HBnBFacade:
     def update_user(self, user_id, user_data):
         return self.user_repo.update(user_id, user_data)
 
-    # ===== AMENITY METHODS =====
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
         self.amenity_repo.add(amenity)
@@ -44,14 +42,11 @@ class HBnBFacade:
     def update_amenity(self, amenity_id, amenity_data):
         return self.amenity_repo.update(amenity_id, amenity_data)
 
-    # ===== PLACE METHODS =====
     def create_place(self, place_data):
-        # Récupérer le propriétaire
         owner = self.user_repo.get(place_data['owner_id'])
         if not owner:
             raise ValueError("Owner not found")
 
-        # Traiter les amenities si présents
         amenities = []
         if 'amenities' in place_data and place_data['amenities']:
             for amenity_data in place_data['amenities']:
@@ -60,18 +55,15 @@ class HBnBFacade:
                     amenity = self.amenity_repo.get(amenity_data)
                     if amenity:
                         amenities.append(amenity)
-                # Si c'est un dictionnaire avec l'ID
                 elif isinstance(amenity_data, dict) and 'id' in amenity_data:
                     amenity = self.amenity_repo.get(amenity_data['id'])
                     if amenity:
                         amenities.append(amenity)
         
-        # Supprimer les amenities des données avant création
         place_data_clean = place_data.copy()
         if 'amenities' in place_data_clean:
             del place_data_clean['amenities']
 
-        # Créer le place
         place = Place(
             type=place_data_clean['type'],
             title=place_data_clean['title'],
@@ -84,7 +76,6 @@ class HBnBFacade:
             owner=owner
         )
 
-        # Ajouter les amenities
         place.amenities = amenities
 
         self.place_repo.add(place)

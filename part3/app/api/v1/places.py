@@ -34,8 +34,6 @@ class PlaceList(Resource):
         data = request.get_json()
         if not data or 'title' not in data or 'price_per_night' not in data:
             api.abort(400, 'Invalid input data')
-
-        # Vérifier que tous les champs requis sont présents
         required_fields = ['type', 'title', 'price_per_night', 'latitude', 'longitude', 'max_guests']
         for field in required_fields:
             if field not in data:
@@ -44,7 +42,6 @@ class PlaceList(Resource):
         current_user_id = get_jwt_identity()
         data['owner_id'] = current_user_id
 
-        # Valeur par défaut pour is_available si non fournie
         if 'is_available' not in data:
             data['is_available'] = True
 
