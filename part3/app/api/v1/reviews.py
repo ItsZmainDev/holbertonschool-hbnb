@@ -22,24 +22,22 @@ class ReviewList(Resource):
     def post(self):
         """Create a new review (authenticated user only)"""
         data = request.json
-        current_user = get_jwt_identity()
-        user_id = current_user["id"]
-
+        current_user_id = get_jwt_identity()
         # Vérifier que le lieu existe
         place = facade.get_place(data["place_id"])
         if not place:
             api.abort(400, "Place not found")
 
         # L'utilisateur ne peut pas reviewer son propre lieu
-        if place["user_id"] == user_id:
+        if place["owner_id"] == current_user_id:
             api.abort(400, "You cannot review your own place")
 
         # L'utilisateur ne peut pas reviewer deux fois le même lieu
-        if facade.user_already_reviewed(user_id, data["place_id"]):
+        if facade.user_already_reviewed(current_user_id, data["place_id"]):
             api.abort(400, "You have already reviewed this place")
 
         # Injecter l'utilisateur dans la review
-        data["user_id"] = user_id
+        data["user_id"] = current_user_id
 
         review = facade.create_review(data)
         if not review:

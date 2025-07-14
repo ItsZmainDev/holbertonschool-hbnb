@@ -1,5 +1,8 @@
 from app.persistence.repository import SQLAlchemyRepository
-from app.models import User, Place, Review, Amenity
+from app.models.user import User
+from app.models.place import Place
+from app.models.review import Review
+from app.models.amenity import Amenity
 
 class HBnBFacade:
     def __init__(self):
@@ -8,6 +11,7 @@ class HBnBFacade:
         self.review_repo = SQLAlchemyRepository(Review)
         self.amenity_repo = SQLAlchemyRepository(Amenity)
 
+    # ===== USER METHODS =====
     def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
@@ -16,76 +20,73 @@ class HBnBFacade:
     def get_user(self, user_id):
         return self.user_repo.get(user_id)
 
-    def is_user_admin(self, user_id):
-        user = self.get_user(user_id)
-        return user and user.is_admin if user else False
-
     def get_user_by_email(self, email):
         return self.user_repo.get_by_attribute('email', email)
 
     def get_all_users(self):
-        """Retrieve all users from the database"""
         return self.user_repo.get_all()
 
     def update_user(self, user_id, user_data):
-        user = self.user_repo.get(user_id)
-        if not user:
-            return None
-        for key, value in user_data.items():
-            setattr(user, key, value)
-        self.user_repo.update(user_id, user)
-        return user
+        return self.user_repo.update(user_id, user_data)
 
+    # ===== AMENITY METHODS =====
     def create_amenity(self, amenity_data):
-        try:
-            existing_amenity = self.amenity_repo.get_by_attribute('name', amenity_data['name'])
-            if existing_amenity:
-                raise ValueError("Amenity with this name already exists")
-            
-            amenity = Amenity(**amenity_data)
-            self.amenity_repo.add(amenity)
-            return amenity
-        except Exception as e:
-            raise ValueError(f"Error creating amenity: {str(e)}")
+        amenity = Amenity(**amenity_data)
+        self.amenity_repo.add(amenity)
+        return amenity
 
     def get_amenity(self, amenity_id):
-        amenity = self.amenity_repo.get(amenity_id)
-        if amenity:
-            return amenity.to_dict()
-        return None
+        return self.amenity_repo.get(amenity_id)
 
     def get_all_amenities(self):
         return self.amenity_repo.get_all()
 
     def update_amenity(self, amenity_id, amenity_data):
-        amenity = self.amenity_repo.get(amenity_id)
-        if not amenity:
-            return None
-        
-        if 'name' in amenity_data and amenity_data['name'] != amenity.name:
-            existing = self.amenity_repo.get_by_attribute('name', amenity_data['name'])
-            if existing and existing.id != amenity_id:
-                raise ValueError("Amenity with this name already exists")
-        
-        for key, value in amenity_data.items():
-            setattr(amenity, key, value)
-        self.amenity_repo.update(amenity_id, amenity)
-        return amenity
+        return self.amenity_repo.update(amenity_id, amenity_data)
 
+    # ===== PLACE METHODS =====
     def create_place(self, place_data):
-        owner_id = place_data.pop('owner_id', None)
-        if not owner_id:
-            raise ValueError("owner_id is required")
-        owner = self.user_repo.get(owner_id)
+        # Récupérer le propriétaire
+        owner = self.user_repo.get(place_data['owner_id'])
         if not owner:
             raise ValueError("Owner not found")
-        amenities_ids = place_data.pop('amenities', [])
-        place_data['owner'] = owner
-        place = Place(**place_data)
-        for amenity_id in amenities_ids:
-            amenity = self.amenity_repo.get(amenity_id)
-            if amenity:
-                place.amenities.append(amenity)
+
+        # Traiter les amenities si présents
+        amenities = []
+        if 'amenities' in place_data and place_data['amenities']:
+            for amenity_data in place_data['amenities']:
+                # Si c'est juste un ID (string)
+                if isinstance(amenity_data, str):
+                    amenity = self.amenity_repo.get(amenity_data)
+                    if amenity:
+                        amenities.append(amenity)
+                # Si c'est un dictionnaire avec l'ID
+                elif isinstance(amenity_data, dict) and 'id' in amenity_data:
+                    amenity = self.amenity_repo.get(amenity_data['id'])
+                    if amenity:
+                        amenities.append(amenity)
+        
+        # Supprimer les amenities des données avant création
+        place_data_clean = place_data.copy()
+        if 'amenities' in place_data_clean:
+            del place_data_clean['amenities']
+
+        # Créer le place
+        place = Place(
+            type=place_data_clean['type'],
+            title=place_data_clean['title'],
+            description=place_data_clean.get('description', ''),
+            longitude=place_data_clean['longitude'],
+            latitude=place_data_clean['latitude'],
+            price_per_night=place_data_clean['price_per_night'],
+            max_guests=place_data_clean['max_guests'],
+            is_available=place_data_clean.get('is_available', True),
+            owner=owner
+        )
+
+        # Ajouter les amenities
+        place.amenities = amenities
+
         self.place_repo.add(place)
         return place.to_dict()
 
@@ -96,17 +97,37 @@ class HBnBFacade:
         return None
 
     def get_all_places(self):
-        return [place.to_dict() for place in self.place_repo.get_all()]
-        
+        places = self.place_repo.get_all()
+        return [place.to_dict() for place in places]
+
     def update_place(self, place_id, place_data):
         place = self.place_repo.get(place_id)
         if not place:
             return None
-        for key, value in place_data.items():
-            setattr(place, key, value)
-        self.place_repo.update(place_id, place_data)
-        return place.to_dict()
+        
+        # Traiter les amenities si présents
+        if 'amenities' in place_data and place_data['amenities']:
+            amenities = []
+            for amenity_data in place_data['amenities']:
+                if isinstance(amenity_data, str):
+                    amenity = self.amenity_repo.get(amenity_data)
+                    if amenity:
+                        amenities.append(amenity)
+                elif isinstance(amenity_data, dict) and 'id' in amenity_data:
+                    amenity = self.amenity_repo.get(amenity_data['id'])
+                    if amenity:
+                        amenities.append(amenity)
+            place.amenities = amenities
+            # Supprimer les amenities des données avant update
+            place_data = place_data.copy()
+            del place_data['amenities']
+        
+        return self.place_repo.update(place_id, place_data)
 
+    def delete_place(self, place_id):
+        return self.place_repo.delete(place_id)
+
+    # ===== REVIEW METHODS =====
     def create_review(self, review_data):
         user = self.user_repo.get(review_data.get("user_id"))
         place = self.place_repo.get(review_data.get("place_id"))
@@ -121,7 +142,7 @@ class HBnBFacade:
             place=place
         )
         self.review_repo.add(review)
-        return review.to_dict() 
+        return review.to_dict()
 
     def get_review(self, review_id):
         review = self.review_repo.get(review_id)
@@ -134,45 +155,22 @@ class HBnBFacade:
 
     def get_reviews_by_place(self, place_id):
         reviews = self.review_repo.get_all()
-        return [r.to_dict() for r in reviews if r.place.id == place_id]
+        return [r.to_dict() for r in reviews if r.place_id == place_id]
 
     def update_review(self, review_id, review_data):
-        review = self.review_repo.get(review_id)
-        if not review:
-            return None
-
-        if 'text' in review_data:
-            review.text = review_data['text']
-        if 'rating' in review_data:
-            review.rating = review_data['rating']
-
-        self.review_repo.update(review_id, review)
-        return review.to_dict()
-
-    def delete_user(self, user_id):
-        user = self.user_repo.get(user_id)
-        if not user:
-            return False
-        self.user_repo.delete(user_id)
-        return True
-
-    def delete_amenity(self, amenity_id):
-        amenity = self.amenity_repo.get(amenity_id)
-        if not amenity:
-            return False
-        self.amenity_repo.delete(amenity_id)
-        return True
-
-    def delete_place(self, place_id):
-        place = self.place_repo.get(place_id)
-        if not place:
-            return False
-        self.place_repo.delete(place_id)
-        return True
+        return self.review_repo.update(review_id, review_data)
 
     def delete_review(self, review_id):
         review = self.review_repo.get(review_id)
-        if not review:
-            return False
-        self.review_repo.delete(review_id)
-        return True
+        if review:
+            self.review_repo.delete(review_id)
+            return True
+        return False
+
+    def user_already_reviewed(self, user_id, place_id):
+        """Check if a user has already reviewed a place"""
+        reviews = self.review_repo.get_all()
+        for review in reviews:
+            if review.user_id == user_id and review.place_id == place_id:
+                return True
+        return False

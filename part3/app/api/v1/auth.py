@@ -19,9 +19,13 @@ class LoginResource(Resource):
         data = request.get_json()
 
         user = facade.get_user_by_email(data['email'])
-        print(user);
+        print(user)
         if not user or not user.verify_password(data['password']):
             return {'error': 'Invalid credentials'}, 401
 
-        token = create_access_token(identity={'id': str(user.id), 'is_admin': user.is_admin})
+        # Identité = chaîne, claims supplémentaires = dictionnaire
+        token = create_access_token(
+            identity=str(user.id),
+            additional_claims={'is_admin': user.is_admin}
+        )
         return {'access_token': token}, 200

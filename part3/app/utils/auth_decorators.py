@@ -23,7 +23,7 @@ def admin_required(f):
             return {'error': 'Token required'}, 401
         
         claims = get_jwt()
-        current_user_id = get_jwt_identity()
+        current_user_id = get_jwt_identity()  # C'est maintenant une chaîne
         
         print(f"🔍 Current user ID: {current_user_id}")  # Debug
         print(f"🔍 JWT claims: {claims}")  # Debug
@@ -32,7 +32,7 @@ def admin_required(f):
             print("✅ User is admin (from claims)")  # Debug
             return f(*args, **kwargs)
         
-        user = facade.get_user(current_user_id['id'])
+        user = facade.get_user(current_user_id)  # Utilise directement la chaîne
         if not user or not user.is_admin:
             print(f"❌ User not admin: {user}")  # Debug
             return {'error': 'Administrator access required'}, 403
@@ -51,13 +51,13 @@ def owner_or_admin_required(f):
         except Exception as e:
             return {'error': 'Token required'}, 401
         
-        current_user_id = get_jwt_identity()
+        current_user_id = get_jwt_identity()  # C'est maintenant une chaîne
         claims = get_jwt()
         
         if claims.get('is_admin'):
             return f(*args, **kwargs)
         
-        current_user = facade.get_user(current_user_id)
+        current_user = facade.get_user(current_user_id)  # Utilise directement la chaîne
         if not current_user:
             return {'error': 'User not found'}, 404
 

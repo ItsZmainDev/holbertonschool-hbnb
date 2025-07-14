@@ -12,12 +12,14 @@ amenity_model = api.model('Amenity', {
 })
 
 place_model = api.model('Place', {
+    'type': fields.String(required=True, description='Type of the place (e.g., apartment, house)'),
     'title': fields.String(required=True, description='Title of the place'),
     'description': fields.String(description='Description of the place'),
     'price_per_night': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
-    'owner_id': fields.String(required=True, description='ID of the owner'),
+    'max_guests': fields.Integer(required=True, description='Maximum number of guests'),
+    'is_available': fields.Boolean(description='Availability status', default=True),
     'amenities': fields.List(fields.Nested(amenity_model), description='List of amenities'),
 })
 
@@ -33,8 +35,18 @@ class PlaceList(Resource):
         if not data or 'title' not in data or 'price_per_night' not in data:
             api.abort(400, 'Invalid input data')
 
-        current_user = get_jwt_identity()
-        data['user_id'] = current_user['id']
+        # Vérifier que tous les champs requis sont présents
+        required_fields = ['type', 'title', 'price_per_night', 'latitude', 'longitude', 'max_guests']
+        for field in required_fields:
+            if field not in data:
+                api.abort(400, f'Missing required field: {field}')
+
+        current_user_id = get_jwt_identity()
+        data['owner_id'] = current_user_id
+
+        # Valeur par défaut pour is_available si non fournie
+        if 'is_available' not in data:
+            data['is_available'] = True
 
         place = facade.create_place(data)
         return place, 201
