@@ -69,7 +69,6 @@ class ReviewResource(Resource):
     @api.response(200, 'Review updated successfully')
     @api.response(403, 'Unauthorized action')
     @api.response(404, 'Review not found')
-<<<<<<< HEAD
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Access denied')
     def put(self, review_id):
@@ -80,28 +79,13 @@ class ReviewResource(Resource):
             return {'error': 'Review not found'}, 404
         
         updated_review = facade.update_review(review_id, review_data)
-=======
-    @jwt_required()
-    def put(self, review_id):
-        """Update a review (only by the author)"""
-        current_user = get_jwt_identity()
-        review = facade.get_review(review_id)
-        if not review:
-            api.abort(404, 'Review not found')
 
-        if review["user_id"] != current_user["id"]:
-            api.abort(403, "Unauthorized action")
-
-        data = request.json
-        updated = facade.update_review(review_id, data)
->>>>>>> origin/dev-bibi
         return {'message': 'Review updated successfully'}, 200
     
     @owner_or_admin_required
     @api.response(200, 'Review deleted successfully')
     @api.response(403, 'Unauthorized action')
     @api.response(404, 'Review not found')
-<<<<<<< HEAD
     @api.response(403, 'Access denied')
     def delete(self, review_id):
         """Delete a review (Owner or Admin only)"""
@@ -110,20 +94,6 @@ class ReviewResource(Resource):
             return {'error': 'Review not found'}, 404
         
         facade.delete_review(review_id)
-=======
-    @jwt_required()
-    def delete(self, review_id):
-        """Delete a review (only by the author)"""
-        current_user = get_jwt_identity()
-        review = facade.get_review(review_id)
-        if not review:
-            api.abort(404, 'Review not found')
-
-        if review["user_id"] != current_user["id"]:
-            api.abort(403, "Unauthorized action")
-
-        deleted = facade.delete_review(review_id)
->>>>>>> origin/dev-bibi
         return {'message': 'Review deleted successfully'}, 200
 
 

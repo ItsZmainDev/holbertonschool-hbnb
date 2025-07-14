@@ -19,6 +19,7 @@ class LoginResource(Resource):
         data = request.get_json()
 
         user = facade.get_user_by_email(data['email'])
+        print(user);
         if not user or not user.verify_password(data['password']):
             return {'error': 'Invalid credentials'}, 401
 

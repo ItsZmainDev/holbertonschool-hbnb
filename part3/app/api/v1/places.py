@@ -37,7 +37,7 @@ class PlaceList(Resource):
             api.abort(400, 'Invalid input data')
 
         current_user = get_jwt_identity()
-        data['user_id'] = current_user['id']  # Associe le lieu à l'utilisateur connecté
+        data['user_id'] = current_user['id']
 
         place = facade.create_place(data)
         return place, 201
@@ -65,11 +65,7 @@ class PlaceResource(Resource):
     @api.response(403, 'Unauthorized action')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
-<<<<<<< HEAD
     @api.response(403, 'Access denied')
-=======
-    @jwt_required()
->>>>>>> origin/dev-bibi
     def put(self, place_id):
         """Update a place's information (Owner or Admin only)"""
         place_data = api.payload

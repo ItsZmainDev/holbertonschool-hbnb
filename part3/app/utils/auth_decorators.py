@@ -6,22 +6,38 @@ from app.services import facade
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        # Vérifiez d'abord si l'en-tête Authorization est présent
+        auth_header = request.headers.get('Authorization')
+        print(f"🔍 Authorization header: {auth_header}")  # Debug
+        
+        if not auth_header:
+            print("❌ No Authorization header found")  # Debug
+            return {'error': 'Token required'}, 401
+            
         try:
             from flask_jwt_extended import verify_jwt_in_request
             verify_jwt_in_request()
+            print("✅ JWT verification passed")  # Debug
         except Exception as e:
+            print(f"❌ JWT verification failed: {e}")  # Debug
             return {'error': 'Token required'}, 401
         
         claims = get_jwt()
         current_user_id = get_jwt_identity()
         
+        print(f"🔍 Current user ID: {current_user_id}")  # Debug
+        print(f"🔍 JWT claims: {claims}")  # Debug
+        
         if claims.get('is_admin'):
+            print("✅ User is admin (from claims)")  # Debug
             return f(*args, **kwargs)
         
-        user = facade.get_user(current_user_id)
+        user = facade.get_user(current_user_id['id'])
         if not user or not user.is_admin:
+            print(f"❌ User not admin: {user}")  # Debug
             return {'error': 'Administrator access required'}, 403
         
+        print("✅ User is admin (from database)")  # Debug
         return f(*args, **kwargs)
     
     return decorated_function

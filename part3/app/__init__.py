@@ -15,12 +15,23 @@ from app.api.v1.test import api as test_ns
 def create_app(config_class):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    authorizations = {
+        'Bearer Auth': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+            'description': "Type in the *'Value'* input box below: **'Bearer &lt;JWT&gt;'**, where JWT is the token"
+        }
+    }
     
     api = Api(
         app,
         version='1.0',
         title='HBnB API',
         description='HBnB Application API',
+        authorizations=authorizations,
+        security='Bearer Auth',
         doc='/api/v1/'
     )
 
@@ -35,9 +46,33 @@ def create_app(config_class):
     jwt.init_app(app)
     bcrypt.init_app(app)
 
+    def create_default_admin():
+        """Crée un utilisateur administrateur par défaut s'il n'existe pas"""
+        from app.services.facade import HBnBFacade
+        facade = HBnBFacade()
+        
+        admin_email = 'test@hbnb.io'
+        existing_admin = facade.get_user_by_email(admin_email)
+        
+        if not existing_admin:
+            admin_data = {
+                'first_name': 'Admin',
+                'last_name': 'HBnB',
+                'phone_number': '+1234567890',
+                'email': admin_email,
+                'password': 'admin1234',  # Sera hashé automatiquement
+                'is_admin': True
+            }
+            
+            admin_user = facade.create_user(admin_data)
+            print(f"✅ Utilisateur administrateur créé: {admin_email}")
+        else:
+            print(f"ℹ️  Utilisateur administrateur existe déjà: {admin_email}")
+
     with app.app_context():
         db.drop_all()
         db.create_all()
         print("Tables recreated successfully!")
+        create_default_admin()
 
     return app

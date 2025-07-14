@@ -5,7 +5,6 @@ from app.extensions import db
 from app.extensions import bcrypt
 import uuid
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
 
 if TYPE_CHECKING:
     from app.models.place import Place
@@ -42,7 +41,12 @@ class User(BaseModel, db.Model):
         self.profile_picture = profile_picture
         self.address = address
         self.email = email
-        self.password = password
+        # self.password = password
+        if password:
+            self.hash_password(password)
+        else:
+            self.password = password
+
         self.is_admin = is_admin
         self.is_owner = is_owner
         self.places: List[Place] = []
@@ -54,17 +58,18 @@ class User(BaseModel, db.Model):
 
     def verify_password(self, password):
         """Verifies if the provided password matches the hashed password."""
+        print(f"Verifying password for user {self.email}")
         return bcrypt.check_password_hash(self.password, password)
 
-    @property
-    def is_admin(self):
-        return self.__is_admin
+    # @property
+    # def is_admin(self):
+    #     return self.__is_admin
 
-    @is_admin.setter
-    def is_admin(self, value):
-        if not isinstance(value, bool):
-            raise TypeError("Is Admin must be a boolean")
-        self.__is_admin = value
+    # @is_admin.setter
+    # def is_admin(self, value):
+    #     if not isinstance(value, bool):
+    #         raise TypeError("Is Admin must be a boolean")
+    #     self.__is_admin = value
 
     # @property
     # def first_name(self):
@@ -115,12 +120,6 @@ class User(BaseModel, db.Model):
     #         raise TypeError("Is Admin must be a boolean")
     #     self.__is_admin = value
     
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
-
-    def verify_password(self, password):
-        return check_password_hash(self.password, password)
-
     def to_dict(self):
         return {
             'id': self.id,
