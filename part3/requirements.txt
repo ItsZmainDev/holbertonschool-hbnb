@@ -1,6 +1,5 @@
 flask
 flask-restx
 typing
-abc
 flask_sqlalchemy
 flask_jwt_extended
