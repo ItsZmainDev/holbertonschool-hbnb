@@ -47,7 +47,7 @@ def create_app(config_class):
     bcrypt.init_app(app)
 
     def create_default_admin():
-        """Crée un utilisateur administrateur par défaut s'il n'existe pas"""
+        """Create a default admin user if it doesn't exist"""
         from app.services.facade import HBnBFacade
         facade = HBnBFacade()
         
@@ -60,14 +60,14 @@ def create_app(config_class):
                 'last_name': 'HBnB',
                 'phone_number': '+1234567890',
                 'email': admin_email,
-                'password': 'admin1234',  # Sera hashé automatiquement
+                'password': 'admin1234',
                 'is_admin': True
             }
             
             admin_user = facade.create_user(admin_data)
-            print(f"✅ Utilisateur administrateur créé: {admin_email}")
+            print(f"User created successfully: {admin_user.email}")
         else:
-            print(f"ℹ️  Utilisateur administrateur existe déjà: {admin_email}")
+            print(f"User already exists: {admin_email}")
 
     with app.app_context():
         db.create_all()
