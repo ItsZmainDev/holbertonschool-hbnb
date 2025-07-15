@@ -70,7 +70,6 @@ def create_app(config_class):
             print(f"ℹ️  Utilisateur administrateur existe déjà: {admin_email}")
 
     with app.app_context():
-        db.drop_all()
         db.create_all()
         print("Tables recreated successfully!")
         create_default_admin()

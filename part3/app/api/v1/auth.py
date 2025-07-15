@@ -24,6 +24,6 @@ class LoginResource(Resource):
 
         token = create_access_token(
             identity=str(user.id),
-            additional_claims={'is_admin': user.is_admin}
+            additional_claims={'id': user.id, 'is_admin': user.is_admin}
         )
         return {'access_token': token}, 200

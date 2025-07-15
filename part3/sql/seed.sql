@@ -6,7 +6,7 @@ VALUES (
     'HBnB',
     'admin@hbnb.io',
     '$2b$12$eQFMRmh.xP93z6bN/4UcuOlnZQzKKjG2kQyUcBBAcYHmfph0nJj0S',  -- bcrypt hash of "admin1234"
-    TRUE
+    1
 );
 
 -- Amenities

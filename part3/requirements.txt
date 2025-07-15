@@ -1,6 +1,7 @@
 flask
 flask-restx
 typing
-flask_sqlalchemy
-flask_jwt_extended
+sqlalchemy
+flask-sqlalchemy
+flask-jwt-extended
 flask-bcrypt
