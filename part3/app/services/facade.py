@@ -39,6 +39,24 @@ class HBnBFacade:
     def get_all_amenities(self):
         return self.amenity_repo.get_all()
 
+    def create_amenity_for_place(self, amenity_data, place_id):
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError("Place not found")
+        
+        existing_amenity = self.amenity_repo.get_by_attribute('name', amenity_data['name'])
+        if existing_amenity:
+            if existing_amenity not in place.amenities:
+                place.amenities.append(existing_amenity)
+                self.place_repo.update(place_id, {})
+            return existing_amenity
+        else:
+            amenity = Amenity(**amenity_data)
+            self.amenity_repo.add(amenity)
+            place.amenities.append(amenity)
+            self.place_repo.update(place_id, {})
+            return amenity
+
     def update_amenity(self, amenity_id, amenity_data):
         return self.amenity_repo.update(amenity_id, amenity_data)
 
@@ -50,15 +68,26 @@ class HBnBFacade:
         amenities = []
         if 'amenities' in place_data and place_data['amenities']:
             for amenity_data in place_data['amenities']:
-                # Si c'est juste un ID (string)
                 if isinstance(amenity_data, str):
                     amenity = self.amenity_repo.get(amenity_data)
                     if amenity:
                         amenities.append(amenity)
-                elif isinstance(amenity_data, dict) and 'id' in amenity_data:
-                    amenity = self.amenity_repo.get(amenity_data['id'])
-                    if amenity:
-                        amenities.append(amenity)
+                elif isinstance(amenity_data, dict):
+                    if 'id' in amenity_data:
+                        amenity = self.amenity_repo.get(amenity_data['id'])
+                        if amenity:
+                            amenities.append(amenity)
+                    elif 'name' in amenity_data:
+                        existing_amenity = self.amenity_repo.get_by_attribute('name', amenity_data['name'])
+                        if existing_amenity:
+                            amenities.append(existing_amenity)
+                        else:
+                            new_amenity = Amenity(
+                                name=amenity_data['name'],
+                                description=amenity_data.get('description', '')
+                            )
+                            self.amenity_repo.add(new_amenity)
+                            amenities.append(new_amenity)
         
         place_data_clean = place_data.copy()
         if 'amenities' in place_data_clean:
@@ -104,12 +133,23 @@ class HBnBFacade:
                     amenity = self.amenity_repo.get(amenity_data)
                     if amenity:
                         amenities.append(amenity)
-                elif isinstance(amenity_data, dict) and 'id' in amenity_data:
-                    amenity = self.amenity_repo.get(amenity_data['id'])
-                    if amenity:
-                        amenities.append(amenity)
+                elif isinstance(amenity_data, dict):
+                    if 'id' in amenity_data:
+                        amenity = self.amenity_repo.get(amenity_data['id'])
+                        if amenity:
+                            amenities.append(amenity)
+                    elif 'name' in amenity_data:
+                        existing_amenity = self.amenity_repo.get_by_attribute('name', amenity_data['name'])
+                        if existing_amenity:
+                            amenities.append(existing_amenity)
+                        else:
+                            new_amenity = Amenity(
+                                name=amenity_data['name'],
+                                description=amenity_data.get('description', '')
+                            )
+                            self.amenity_repo.add(new_amenity)
+                            amenities.append(new_amenity)
             place.amenities = amenities
-            # Supprimer les amenities des données avant update
             place_data = place_data.copy()
             del place_data['amenities']
         
@@ -157,6 +197,12 @@ class HBnBFacade:
             self.review_repo.delete(review_id)
             return True
         return False
+
+    def get_amenities_by_place(self, place_id):
+        place = self.place_repo.get(place_id)
+        if not place:
+            return []
+        return [{'id': amenity.id, 'name': amenity.name, 'description': amenity.description} for amenity in place.amenities]
 
     def user_already_reviewed(self, user_id, place_id):
         """Check if a user has already reviewed a place"""

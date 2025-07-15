@@ -20,14 +20,23 @@ class AmenityList(Resource):
     def post(self):
         """Create a new amenity (Admin only)"""
         amenity_data = api.payload
-        new_amenity = facade.create_amenity(amenity_data)
-        return {'id': new_amenity.id, 'name': new_amenity.name}, 201
+        place_id = request.args.get('place_id')
+        
+        if place_id:
+            try:
+                new_amenity = facade.create_amenity_for_place(amenity_data, place_id)
+                return {'id': new_amenity.id, 'name': new_amenity.name}, 201
+            except ValueError as e:
+                return {'error': str(e)}, 404
+        else:
+            new_amenity = facade.create_amenity(amenity_data)
+            return {'id': new_amenity.id, 'name': new_amenity.name}, 201
 
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
         """Retrieve all amenities"""
         amenities = facade.get_all_amenities()
-        return [{'id': amenity.id, 'name': amenity.name} for amenity in amenities], 200
+        return [{'id': amenity.id, 'name': amenity.name, 'description': amenity.description} for amenity in amenities], 200
 
 @api.route('/<string:amenity_id>')
 class AmenityResource(Resource):

@@ -94,3 +94,32 @@ class PlaceResource(Resource):
         
         facade.delete_place(place_id)
         return {'message': 'Place deleted successfully'}, 200
+
+@api.route('/<string:place_id>/amenities')
+class PlaceAmenityList(Resource):
+    @api.expect(amenity_model)
+    @api.response(201, 'Amenity successfully created for place')
+    @api.response(400, 'Invalid input data')
+    @api.response(404, 'Place not found')
+    def post(self, place_id):
+        """Create a new amenity for a specific place"""
+        amenity_data = request.get_json()
+        if not amenity_data or 'name' not in amenity_data:
+            api.abort(400, 'Invalid input data')
+        
+        try:
+            amenity = facade.create_amenity_for_place(amenity_data, place_id)
+            return {'id': amenity.id, 'name': amenity.name, 'description': amenity.description}, 201
+        except ValueError as e:
+            api.abort(404, str(e))
+
+    @api.response(200, 'List of amenities for place retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all amenities for a specific place"""
+        place = facade.get_place(place_id)
+        if not place:
+            api.abort(404, 'Place not found')
+        
+        amenities = facade.get_amenities_by_place(place_id)
+        return amenities, 200
