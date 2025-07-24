@@ -45,8 +45,15 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
+
+    PlaceAmenity {
+        uuid place_id FK
+        uuid amenity_id FK
+    }
     
     User ||--o{ Place : owns
     User ||--o{ Review : writes
     Place ||--o{ Review : receives
-    Place }o--o{ Amenity : "many-to-many via place_amenities"
+    Place }o--o{ Amenity : "many-to-many"
+    Place ||--o{ PlaceAmenity : ""
+    Amenity ||--o{ PlaceAmenity : ""
