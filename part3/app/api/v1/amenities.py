@@ -64,3 +64,14 @@ class AmenityResource(Resource):
         
         updated_amenity = facade.update_amenity(amenity_id, amenity_data)
         return {'message': 'Amenity updated successfully'}, 200
+
+    @admin_required
+    @api.response(204, 'Amenity deleted successfully')
+    @api.response(404, 'Amenity not found')
+    def delete(self, amenity_id):
+        """Delete an amenity (Admin only)"""
+        amenity = facade.get_amenity(amenity_id)
+        if not amenity:
+            return {'error': 'Amenity not found'}, 404
+        facade.delete_amenity(amenity_id)
+        return '', 204
