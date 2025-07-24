@@ -3,6 +3,7 @@ from app.extensions import db
 from app.extensions import jwt
 from app.extensions import bcrypt
 from flask_restx import Api
+from flask_jwt_extended import JWTManager
 
 # Import des namespaces API
 from app.api.v1.users import api as users_ns
@@ -45,6 +46,10 @@ def create_app(config_class):
     db.init_app(app)
     jwt.init_app(app)
     bcrypt.init_app(app)
+
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload):
+        return {'error': 'Token has expired'}, 401
 
     def create_default_admin():
         """Create a default admin user if it doesn't exist"""
