@@ -4,6 +4,7 @@ from app.extensions import jwt
 from app.extensions import bcrypt
 from flask_restx import Api
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 # Import des namespaces API
 from app.api.v1.users import api as users_ns
@@ -15,6 +16,7 @@ from app.api.v1.test import api as test_ns
 
 def create_app(config_class):
     app = Flask(__name__)
+    CORS(app)
     app.config.from_object(config_class)
 
     authorizations = {
