@@ -1,0 +1,270 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+:root {
+    --background: hsl(220 13% 18%);
+    --foreground: hsl(219 14% 71%);
+    --muted: hsl(220 12% 22%);
+    --muted-foreground: hsl(220 12% 72%);
+    --popover: hsl(220 13% 15%);
+    --popover-foreground: hsl(219 14% 81%);
+    --card: hsl(220 13% 16%);
+    --card-foreground: hsl(219 14% 76%);
+    --border: #ddd;
+    --input: hsl(220 3% 26%);
+    --primary: #d73953;
+    --primary-foreground: #fff;
+}
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background: var(--muted);
+    color: var(--muted-foreground);
+    padding: 1rem 2rem;
+    margin: 1.5rem auto 0 auto;
+    width: 90%;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    position: sticky;
+    left: 0;
+    right: 0;
+    top: 1rem;
+    z-index: 1000;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.logo {
+    height: 40px;
+    margin-right: 1rem;
+}
+
+.login-button {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    text-decoration: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-weight: 600;
+    transition: background 0.3s;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    font-size: 1rem;
+    display: inline-block;
+}
+.login-button:hover {
+    background: var(--primary-foreground);
+    color: var(--primary);
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 0;
+    width: 100%;
+}
+
+#places-list-title {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 2rem;
+}
+
+.places {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    width: 100%;
+}
+
+.place-card {
+    background: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 20px;
+    padding: 10px;
+    min-width: 250px;
+    max-width: 300px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.details-button {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+.details-button:hover {
+    background: var(--primary-foreground);
+    color: var(--primary);
+}
+
+.place-details {
+    background: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 20px;
+    padding: 10px;
+    max-width: 600px;
+    width: 100%;
+}
+
+.place-info h2 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+.place-info ul {
+    margin-top: 0.5rem;
+    padding-left: 1.2rem;
+}
+.place-info li {
+    margin-bottom: 0.3rem;
+}
+
+.review-card {
+    background: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 20px;
+    padding: 10px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 1rem;
+}
+
+.review-card span {
+    display: block;
+    color: var(--primary);
+    margin-top: 0.5rem;
+}
+
+.add-review.form {
+    background: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.add-review.form h2 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.add-review.form label {
+    color: var(--foreground);
+    margin-bottom: 0.3rem;
+}
+
+.add-review.form textarea,
+.add-review.form select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--input);
+    color: var(--foreground);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    resize: vertical;
+}
+
+.add-review.form textarea:focus,
+.add-review.form select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+#login-form {
+    background: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.form-group label {
+    color: var(--foreground);
+}
+.form-group input {
+    width: 100%;
+    height: 2.5rem;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--input);
+    color: var(--foreground);
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+footer {
+    background: var(--muted);
+    color: var(--muted-foreground);
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    border-radius: 0 0 1rem 1rem;
+    width: 100%;
+}

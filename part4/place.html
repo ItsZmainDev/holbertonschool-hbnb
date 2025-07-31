@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Details</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="icon.png">
+</head>
+<body>
+    <header>
+        <nav>
+            <img src="images/logo.png" alt="Logo" class="logo" />
+            <a href="index.html" class="login-button">Home</a>
+        </nav>
+    </header>
+    <main>
+        <section class="place-details" id="place-details">
+            <div class="place-info">
+                <h2>Cozy Apartment</h2>
+                <p><strong>Host:</strong> John Doe</p>
+                <p><strong>Price per night:</strong> $120</p>
+                <p><strong>Description:</strong> A cozy apartment in the city center, close to all amenities.</p>
+                <ul>
+                    <li>WiFi</li>
+                    <li>Kitchen</li>
+                    <li>Air Conditioning</li>
+                </ul>
+            </div>
+        </section>
+        <section id="add-review">
+            <a href="add_review.html?id=" class="details-button" id="add-review-link">Add Review</a>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 All rights reserved.</p>
+    </footer>
+    <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const placeId = params.get('id');
+            const addReviewLink = document.getElementById('add-review-link');
+            if (addReviewLink && placeId) {
+                addReviewLink.href = `add_review.html?id=${placeId}`;
+            }
+        });
+    </script>
+</body>
+</html>
